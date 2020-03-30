@@ -1,0 +1,127 @@
+plugins {
+	id "java"
+	id "eclipse"
+	id "idea"
+	id "fabric-loom" version "0.2.6-SNAPSHOT"
+	id "maven-publish"
+	id "checkstyle"
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+// Elytra version format - notes branch, commit count, and dirty in version string
+def branch
+if (System.env.BRANCH_NAME) {
+	// CI support
+	branch = System.env.BRANCH_NAME
+	branch = branch.substring(branch.lastIndexOf("/")+1)
+} else {
+	branch = "git rev-parse --abbrev-ref HEAD".execute().in.text.trim()
+}
+if (branch == "HEAD") {
+	branch = "git rev-parse --short HEAD".execute().in.text.trim()
+}
+def commits
+if (System.env.RUN_COUNT) {
+	//CI support, for some reason github actions doesn't like getting the rev-list count
+	commits = System.env.RUN_COUNT
+} else {
+	commits = "git rev-list --count HEAD".execute().in.text.trim()
+}
+def dirty = !"git diff-index HEAD".execute().in.text.trim().isEmpty()
+
+def libName = "${project.library_name}"
+def libVer = "${project.library_version}"
+archivesBaseName = "fablabs-" + libName + "-v" + libVer
+group = "${project.maven_group}"
+version = branch + "-${project.mod_version}" + "." + commits + (dirty ? "-dirty" : "") + "+${project.minecraft_version}"
+def modVersion = "${project.mod_version}" + "-" + commits + "+${project.minecraft_version}" // semver-compatible version string for use in fabric.mod.json
+def modRepo
+if (System.env.REPO_NAME) {
+	modRepo = System.env.REPO_NAME
+} else {
+	modRepo = "FabLabsMC/${project.library_name}"
+}
+
+minecraft {
+}
+
+repositories {
+	mavenCentral()
+	maven { url "http://maven.fabricmc.net/" } // Fabric maven - home of Fabric API and ModMenu
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.minecraft_version}+build.${project.yarn_build}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	// compileOnly "com.google.code.findbugs:jsr305:3.0.2" //TODO: what are we going to do for annotations?
+}
+
+checkstyle {
+	configFile = rootProject.file("checkstyle.xml")
+	toolVersion = '8.25'
+}
+
+processResources {
+	inputs.property "version", modVersion
+	inputs.property "id", project.archivesBaseName
+	inputs.property "repo", modRepo
+	inputs.property "libname", libName
+	inputs.property "libver", libVer
+	from(sourceSets.main.resources.srcDirs) {
+		include "fabric.mod.json"
+		expand version: modVersion, id: project.archivesBaseName, repo: modRepo, libname: libName, libver: libVer
+	}
+	from(sourceSets.main.resources.srcDirs) {
+		exclude "fabric.mod.json"
+	}
+}
+
+// ensure that the encoding is set to UTF-8, no matter what the system default is
+// this fixes some edge cases with special characters not displaying correctly
+// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+tasks.withType(JavaCompile) {
+	options.encoding = "UTF-8"
+}
+
+// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+// if it is present.
+// If you remove this task, sources will not be generated.
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = "sources"
+	from sourceSets.main.allSource
+}
+
+jar {
+	from "LICENSE"
+}
+
+// configure the maven publication
+publishing {
+	repositories {
+		maven {
+		    name = "GitHubPackages"
+		    url = uri("https://maven.pkg.github.com/" + modRepo.toLowerCase())
+		    credentials {
+			username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+			password = project.findProperty("gpr.key") ?: System.getenv("PASSWORD")
+		    }
+		}
+		// uncomment to publish to the local maven
+		// mavenLocal()
+	}
+	publications {
+		mavenJava(MavenPublication) {
+			// add all the jars that should be included when publishing to maven
+			artifact(remapJar) {
+				builtBy remapJar
+			}
+			artifact(sourcesJar) {
+				builtBy remapSourcesJar
+			}
+		}
+	}
+}

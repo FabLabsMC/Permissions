@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+
+  "name": "FabLabs ${libname} version ${libver}",
+  "icon": "assets/blueprint/icon.png",
+  "description": "Template for starting out FabLabs drafts",
+  "license": "MIT",
+  "contact": {
+    "sources": "https://github.com/${repo}"
+  },
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.fablabsmc.fablabs.api.blueprint.v1.Blueprint"
+    ]
+  },
+  "mixins": [
+    "mixins.${libname}.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.4.0"
+  },
+  "custom": {
+    "modmenu:api": true
+  }
+}
