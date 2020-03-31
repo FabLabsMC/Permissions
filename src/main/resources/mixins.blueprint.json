@@ -1,7 +1,0 @@
-{
-  "required": true,
-  "package": "io.github.fablabsmc.blueprint.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "mixins": [
-  ]
-}
