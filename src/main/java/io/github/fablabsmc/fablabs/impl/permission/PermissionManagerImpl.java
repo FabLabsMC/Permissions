@@ -2,8 +2,8 @@ package io.github.fablabsmc.fablabs.impl.permission;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import io.github.fablabsmc.fablabs.api.permission.v1.PermissionManager;
 import io.github.fablabsmc.fablabs.api.permission.v1.PermissionProvider;
@@ -14,20 +14,15 @@ import net.minecraft.util.Identifier;
 public class PermissionManagerImpl implements PermissionManager {
 	public static final PermissionManager INSTANCE = new PermissionManagerImpl();
 
-	private final Map<Identifier, PermissionProvider> providers = new IdentityHashMap<>();
+	private final Set<PermissionProvider> providers = new HashSet<>();
 
 	private PermissionManagerImpl() { }
 
 	@Override
-	public void registerProvider(Identifier id, PermissionProvider provider) {
-		checkNotNull(id, "The id cannot be null");
+	public void registerProvider(PermissionProvider provider) {
 		checkNotNull(provider, "The provider cannot be null");
 
-		if (this.providers.get(id) != null) {
-			// TODO Throw or warn in log about the provider being overwritten?
-		}
-
-		this.providers.put(id, provider);
+		this.providers.add(provider);
 	}
 
 	@Override
@@ -39,7 +34,7 @@ public class PermissionManagerImpl implements PermissionManager {
 			return false;
 		}
 
-		for (PermissionProvider permissionProvider : this.providers.values()) {
+		for (PermissionProvider permissionProvider : this.providers) {
 			if (permissionProvider.has(player, permission)) {
 				return true;
 			}

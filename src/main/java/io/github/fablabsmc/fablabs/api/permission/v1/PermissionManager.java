@@ -16,10 +16,9 @@ public interface PermissionManager {
 	 *
 	 * <p>A provider is used to query a permissions implementation to ditermine if a player has a permission.
 	 *
-	 * @param id the id of this provider
 	 * @param provider the provider
 	 */
-	void registerProvider(Identifier id, PermissionProvider provider);
+	void registerProvider(PermissionProvider provider);
 
 	/**
 	 * Checks if a player has a certain permission.
