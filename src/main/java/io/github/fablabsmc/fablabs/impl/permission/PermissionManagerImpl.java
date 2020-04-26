@@ -7,9 +7,11 @@ import java.util.Set;
 
 import io.github.fablabsmc.fablabs.api.permission.v1.PermissionManager;
 import io.github.fablabsmc.fablabs.api.permission.v1.PermissionProvider;
+import io.github.fablabsmc.fablabs.api.permission.v1.subject.Subject;
 
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
+
+import net.fabricmc.fabric.api.util.TriState;
 
 public class PermissionManagerImpl implements PermissionManager {
 	public static final PermissionManager INSTANCE = new PermissionManagerImpl();
@@ -19,6 +21,11 @@ public class PermissionManagerImpl implements PermissionManager {
 	private PermissionManagerImpl() { }
 
 	@Override
+	public Subject createSubject(Object represented) {
+		return new SubjectImpl(this, represented);
+	}
+
+	@Override
 	public void registerProvider(PermissionProvider provider) {
 		checkNotNull(provider, "The provider cannot be null");
 
@@ -26,20 +33,22 @@ public class PermissionManagerImpl implements PermissionManager {
 	}
 
 	@Override
-	public boolean has(PlayerEntity player, Identifier permission) {
-		checkNotNull(player, "Player cannot be null");
+	public TriState hasPermission(Subject subject, Identifier permission) {
+		checkNotNull(subject, "Subject cannot be null");
 		checkNotNull(permission, "Permission cannot be null");
 
 		if (this.providers.isEmpty()) {
-			return false;
+			return TriState.DEFAULT;
 		}
 
 		for (PermissionProvider permissionProvider : this.providers) {
-			if (permissionProvider.has(player, permission)) {
-				return true;
+			TriState triState = permissionProvider.hasPermissionTriState(subject, permission);
+
+			if (triState.get()) {
+				return triState;
 			}
 		}
 
-		return false;
+		return TriState.FALSE;
 	}
 }
