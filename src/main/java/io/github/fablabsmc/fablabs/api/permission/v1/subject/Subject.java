@@ -56,7 +56,7 @@ public interface Subject {
 	 * @apiNote Most implementations expect the {@link Identifier} to be in the format of {@code mymod:permission.child}, though you should consult your implementation to determine how it is handled.
 	 */
 	default boolean hasPermission(Identifier permission) {
-		return this.hasPermissionTriState(permission).get();
+		return this.getPermissionValue(permission).get();
 	}
 
 	/**
@@ -66,7 +66,7 @@ public interface Subject {
 	 * @return a {@link TriState} representing whether this subject has the permission.
 	 * @apiNote In many implementations, {@link TriState#DEFAULT} defines that a subject does not have this permission set.
 	 */
-	TriState hasPermissionTriState(Identifier permission);
+	TriState getPermissionValue(Identifier permission);
 
 	/**
 	 * Gets the object this subject is mapped to.

@@ -16,8 +16,8 @@ final class SubjectImpl implements Subject {
 	}
 
 	@Override
-	public TriState hasPermissionTriState(Identifier permission) {
-		return this.permissionManager.hasPermission(this, permission);
+	public TriState getPermissionValue(Identifier permission) {
+		return this.permissionManager.getPermissionValue(this, permission);
 	}
 
 	@Override

@@ -18,10 +18,11 @@ public class PermissionManagerImpl implements PermissionManager {
 
 	private final Set<PermissionProvider> providers = new HashSet<>();
 
-	private PermissionManagerImpl() { }
+	private PermissionManagerImpl() {
+	}
 
 	@Override
-	public Subject createSubject(Object represented) {
+	public Subject asSubject(Object represented) {
 		return new SubjectImpl(this, represented);
 	}
 
@@ -33,7 +34,7 @@ public class PermissionManagerImpl implements PermissionManager {
 	}
 
 	@Override
-	public TriState hasPermission(Subject subject, Identifier permission) {
+	public TriState getPermissionValue(Subject subject, Identifier permission) {
 		checkNotNull(subject, "Subject cannot be null");
 		checkNotNull(permission, "Permission cannot be null");
 
@@ -42,7 +43,7 @@ public class PermissionManagerImpl implements PermissionManager {
 		}
 
 		for (PermissionProvider permissionProvider : this.providers) {
-			TriState triState = permissionProvider.hasPermissionTriState(subject, permission);
+			TriState triState = permissionProvider.getPermissionValue(subject, permission);
 
 			if (triState.get()) {
 				return triState;

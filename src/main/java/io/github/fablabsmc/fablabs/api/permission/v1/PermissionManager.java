@@ -14,12 +14,12 @@ public interface PermissionManager {
 	PermissionManager INSTANCE = PermissionManagerImpl.INSTANCE;
 
 	/**
-	 * Creates a subject which is mapped by an object.
+	 * Gets a subject which is mapped to an object.
 	 *
 	 * @param represented the object mapped by this subject.
-	 * @return a new subject.
+	 * @return a subject.
 	 */
-	Subject createSubject(Object represented);
+	Subject asSubject(Object represented);
 
 	/**
 	 * Registers a permission provider.
@@ -40,5 +40,5 @@ public interface PermissionManager {
 	 * @return whether this player has a permission. False if no providers are registered.
 	 * @apiNote Most implementations expect the {@link Identifier} to be in the format of {@code mymod:permission.child}, though you should consult your implementation to determine how it is handled.
 	 */
-	TriState hasPermission(Subject subject, Identifier permission);
+	TriState getPermissionValue(Subject subject, Identifier permission);
 }
