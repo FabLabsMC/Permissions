@@ -7,13 +7,19 @@ import net.minecraft.util.Identifier;
 import net.fabricmc.fabric.api.util.TriState;
 
 /**
- * A subject is an object which can be queried for permissions checks.
+ * A permission subject is an object which can be queried for permissions checks.
+ * TODO: Fix javdoc, not describing this properly
  *
- * <p>All subjects refer to an existing object.
+ * <p>All permission subjects refer to an existing object.
  * Typically in an implementation, this could be a {@link ServerPlayerEntity player}, a group or the {@link MinecraftServer server}.
  * There is no restriction whether any object can be a subject or not.
  */
-public interface Subject {
+public interface PermissionSubject {
+	/**
+	 * Represents an empty subject which is backed by no data and has no permissions.
+	 */
+	PermissionSubject EMPTY = permission -> TriState.DEFAULT;
+
 	/**
 	 * Checks if a subject has any listed permission.
 	 *
@@ -69,8 +75,9 @@ public interface Subject {
 	TriState getPermissionValue(Identifier permission);
 
 	/**
-	 * Gets the object this subject is mapped to.
-	 * @return the game object.
+	 * Represents an object which provides a subject.
 	 */
-	Object getRepresentedObject();
+	interface Provider {
+		PermissionSubject get();
+	}
 }
