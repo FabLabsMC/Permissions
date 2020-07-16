@@ -1,77 +1,95 @@
 package io.github.fablabsmc.fablabs.impl.permission;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
-import io.github.fablabsmc.fablabs.api.permission.v1.PermissionManager;
-import io.github.fablabsmc.fablabs.api.permission.v1.PermissionProvider;
-import io.github.fablabsmc.fablabs.api.permission.v1.subject.PermissionSubject;
+import io.github.fablabsmc.fablabs.api.permission.v1.PermissionHandler;
+import io.github.fablabsmc.fablabs.api.permission.v1.actor.Actor;
+import io.github.fablabsmc.fablabs.api.permission.v1.actor.OfflineActor;
+import io.github.fablabsmc.fablabs.api.permission.v1.actor.PlayerActor;
+import io.github.fablabsmc.fablabs.api.permission.v1.actor.ServerActor;
+import io.github.fablabsmc.fablabs.api.permission.v1.context.ContextStack;
+import net.fabricmc.fabric.api.util.TriState;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 
-import net.fabricmc.fabric.api.util.TriState;
-
-public class PermissionManagerImpl implements PermissionManager {
-	public static final PermissionManager INSTANCE = new PermissionManagerImpl();
-
-	private final Set<PermissionProvider> providers = new HashSet<>();
+public class PermissionManagerImpl {
+	public static final ContextStack EMPTY_CONTEXT = new EmptyContextStack();
+	private static final Set<PermissionHandler> HANDLERS = new HashSet<>();
 
 	private PermissionManagerImpl() {
 	}
 
-	@Override
-	public PermissionSubject getSubject(ServerPlayerEntity playerEntity) {
-		checkNotNull(playerEntity, "The player cannot be null");
-
-		return PermissionSubject.EMPTY; // fixme: IMPLEMENT
-	}
-
-	@Override
-	public PermissionSubject getSubject(MinecraftServer server) {
-		checkNotNull(server, "The server cannot be null");
-
-		return ((PermissionSubject.Provider) server).get();
-	}
-
-	@Override
-	public PermissionSubject getSubject(Object object) {
-		if (object instanceof PermissionSubject.Provider) {
-			return ((PermissionSubject.Provider) object).get();
+	public static void registerHandler(PermissionHandler handler) {
+		if (!HANDLERS.add(handler)) {
+			throw new IllegalArgumentException((String.format("Tried to register a permissions handler of same id %s", handler.getId())));
 		}
-
-		// fixme: IMPLEMENT more checks
-
-		return PermissionSubject.EMPTY;
 	}
 
-	@Override
-	public void registerProvider(PermissionProvider provider) {
-		checkNotNull(provider, "The provider cannot be null");
+	public static TriState getPermissionValue(Actor actor, ContextStack contextStack, String permission) {
+		Objects.requireNonNull(actor, "Subject cannot be null");
+		Objects.requireNonNull(permission, "Permission cannot be null");
 
-		this.providers.add(provider);
-	}
-
-	@Override
-	public TriState getPermissionValue(PermissionSubject subject, Identifier permission) {
-		checkNotNull(subject, "Subject cannot be null");
-		checkNotNull(permission, "Permission cannot be null");
-
-		if (this.providers.isEmpty()) {
+		if (HANDLERS.isEmpty()) {
 			return TriState.DEFAULT;
 		}
 
-		for (PermissionProvider permissionProvider : this.providers) {
-			TriState triState = permissionProvider.getPermissionValue(subject, permission);
+		for (PermissionHandler handler : HANDLERS) {
+			TriState triState = handler.getPermissionValue(actor, contextStack, permission);
 
 			if (triState.get()) {
 				return triState;
 			}
 		}
 
-		return TriState.FALSE;
+		return TriState.DEFAULT;
+	}
+
+	public static PlayerActor getActor(ServerPlayerEntity player) {
+		return (PlayerActor) player;
+	}
+
+	public static ServerActor getActor(MinecraftServer server) {
+		return (ServerActor) server;
+	}
+
+	public static OfflineActor getOfflineActor(UUID uuid) {
+		return new OfflineActorImpl(uuid);
+	}
+
+	static class OfflineActorImpl implements OfflineActor {
+		private final UUID uuid;
+
+		private OfflineActorImpl(UUID uuid) {
+			this.uuid = uuid;
+		}
+
+		@Override
+		public UUID getPlayerUuid() {
+			return this.uuid;
+		}
+
+		@Override
+		public TriState getPermissionValue(ContextStack contextStack, String permission) {
+			return PermissionManagerImpl.getPermissionValue(this, contextStack, permission);
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (!(o instanceof OfflineActorImpl)) return false;
+
+			OfflineActorImpl that = (OfflineActorImpl) o;
+
+			return this.uuid.equals(that.uuid);
+		}
+
+		@Override
+		public int hashCode() {
+			return this.uuid.hashCode();
+		}
 	}
 }

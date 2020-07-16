@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "permissions-test-mod-v1",
+  "version": "1.0.0",
+
+  "environment": "*",
+  "entrypoints": {
+  },
+  "depends": {
+    "fabricloader": ">=0.4.0"
+  },
+  "custom": {
+    "modmenu:api": true
+  }
+}
