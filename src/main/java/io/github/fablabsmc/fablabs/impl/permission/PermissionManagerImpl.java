@@ -17,7 +17,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class PermissionManagerImpl {
-	public static final ContextStack EMPTY_CONTEXT = new EmptyContextStack();
 	private static final Set<PermissionHandler> HANDLERS = new HashSet<>();
 
 	private PermissionManagerImpl() {
