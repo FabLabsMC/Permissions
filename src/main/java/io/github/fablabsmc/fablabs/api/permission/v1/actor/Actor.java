@@ -1,28 +1,27 @@
 package io.github.fablabsmc.fablabs.api.permission.v1.actor;
 
-import io.github.fablabsmc.fablabs.api.permission.v1.context.ContextStack;
-import net.fabricmc.fabric.api.util.TriState;
+import io.github.fablabsmc.fablabs.api.permission.v1.TriState;
 
 public interface Actor {
-	default boolean hasPermission(ContextStack contextStack, String permission) {
-		return this.getPermissionValue(contextStack, permission).get();
+	default boolean hasPermission(String permission) {
+		return false;//return this.getPermissionValue(permission).get();
 	}
 
-	default boolean hasAny(ContextStack contextStack, Iterable<String> permissions) {
+	default boolean hasAny(Iterable<String> permissions) {
 		for (String permission : permissions) {
-			if (this.hasPermission(contextStack, permission)) return true;
+			if (this.hasPermission(permission)) return true;
 		}
 
 		return false;
 	}
 
-	default boolean hasAll(ContextStack contextStack, Iterable<String> permissions) {
+	default boolean hasAll(Iterable<String> permissions) {
 		for (String permission : permissions) {
-			if (!this.hasPermission(contextStack, permission)) return false;
+			if (!this.hasPermission(permission)) return false;
 		}
 
 		return true;
 	}
 
-	TriState getPermissionValue(ContextStack contextStack, String permission);
+	TriState getPermissionValue(String permission);
 }

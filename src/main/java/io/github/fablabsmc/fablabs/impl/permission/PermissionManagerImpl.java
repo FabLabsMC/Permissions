@@ -6,12 +6,11 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.github.fablabsmc.fablabs.api.permission.v1.PermissionHandler;
+import io.github.fablabsmc.fablabs.api.permission.v1.TriState;
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.Actor;
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.OfflineActor;
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.PlayerActor;
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.ServerActor;
-import io.github.fablabsmc.fablabs.api.permission.v1.context.ContextStack;
-import net.fabricmc.fabric.api.util.TriState;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -28,23 +27,23 @@ public class PermissionManagerImpl {
 		}
 	}
 
-	public static TriState getPermissionValue(Actor actor, ContextStack contextStack, String permission) {
+	public static TriState getPermissionValue(Actor actor, String permission) {
 		Objects.requireNonNull(actor, "Subject cannot be null");
 		Objects.requireNonNull(permission, "Permission cannot be null");
 
 		if (HANDLERS.isEmpty()) {
-			return TriState.DEFAULT;
+			return null;//TriState.DEFAULT;
 		}
 
 		for (PermissionHandler handler : HANDLERS) {
-			TriState triState = handler.getPermissionValue(actor, contextStack, permission);
+			TriState triState = handler.getPermissionValue(actor, permission);
 
-			if (triState.get()) {
-				return triState;
-			}
+			//if (triState.get()) {
+				//return null;//return triState;
+			//}
 		}
 
-		return TriState.DEFAULT;
+		return null;//return TriState.DEFAULT;
 	}
 
 	public static PlayerActor getActor(ServerPlayerEntity player) {
@@ -72,8 +71,8 @@ public class PermissionManagerImpl {
 		}
 
 		@Override
-		public TriState getPermissionValue(ContextStack contextStack, String permission) {
-			return PermissionManagerImpl.getPermissionValue(this, contextStack, permission);
+		public TriState getPermissionValue(String permission) {
+			return null;//return PermissionManagerImpl.getPermissionValue(this, permission);
 		}
 
 		@Override
