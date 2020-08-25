@@ -1,19 +1,19 @@
 package io.github.fablabsmc.fablabs.mixin.permission;
 
 import io.github.fablabsmc.fablabs.api.permission.v1.PermissionManager;
-import io.github.fablabsmc.fablabs.api.permission.v1.actor.ServerActor;
+import io.github.fablabsmc.fablabs.api.permission.v1.actor.EntityActor;
 import io.github.fablabsmc.fablabs.api.permission.v1.context.UserContext;
 import org.spongepowered.asm.mixin.Mixin;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.entity.Entity;
 
 import net.fabricmc.fabric.api.util.TriState;
 
-@Mixin(MinecraftServer.class)
-abstract class MinecraftServerMixin implements ServerActor {
+@Mixin(Entity.class)
+abstract class EntityMixin implements EntityActor {
 	@Override
-	public MinecraftServer toServer() {
-		return (MinecraftServer) (Object) this;
+	public Entity toEntity() {
+		return (Entity) (Object) this;
 	}
 
 	@Override

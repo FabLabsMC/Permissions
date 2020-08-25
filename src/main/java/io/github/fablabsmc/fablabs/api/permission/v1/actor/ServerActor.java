@@ -6,5 +6,5 @@ import net.minecraft.server.MinecraftServer;
  * An actor that represents a Minecraft server.
  */
 public interface ServerActor extends Actor {
-	MinecraftServer getServer();
+	MinecraftServer toServer();
 }

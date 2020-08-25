@@ -3,7 +3,10 @@ package io.github.fablabsmc.fablabs.api.permission.v1;
 import java.util.Objects;
 
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.Actor;
+import io.github.fablabsmc.fablabs.api.permission.v1.context.UserContext;
 import io.github.fablabsmc.fablabs.impl.permission.PermissionManagerImpl;
+
+import net.fabricmc.fabric.api.util.TriState;
 
 /**
  * A permission manager is used to delegate permission value checks on an actor to {@link PermissionHandler}s provided by implementors.
@@ -28,13 +31,13 @@ public final class PermissionManager {
 	 * <p>The permissions implementation controls whether a player has a permission or not, such as permissions which are granted temporarily or due to a context.
 	 *
 	 * @param actor the actor
-	 * @param permission the permission to check for
+	 * @param userContext the permission to check for
 	 * @return whether this player has a permission. False if no providers are registered.
 	 */
-	public static TriState getPermissionValue(Actor actor, String permission) {
+	public static TriState getPermissionValue(Actor actor, UserContext userContext) {
 		Objects.requireNonNull(actor, "Actor cannot be null");
-		Objects.requireNonNull(permission, "Permission cannot be null");
-		return PermissionManagerImpl.getPermissionValue(actor, permission);
+		Objects.requireNonNull(userContext, "User context cannot be null");
+		return PermissionManagerImpl.getPermissionValue(actor, userContext);
 	}
 
 	private PermissionManager() {

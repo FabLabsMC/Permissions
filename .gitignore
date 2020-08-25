@@ -17,6 +17,7 @@
 .idea
 *.ipr
 *.iws
+*.log
 
 # Sekrit files
 private.properties

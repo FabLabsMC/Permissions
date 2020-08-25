@@ -6,9 +6,9 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
 
 public class Test {
-	public void test(UserContext.ContextDescription<BlockEntity> context) {
+	public void test(UserContext.Description<BlockEntity> context) {
 		if (context.isApplicableTo(Inventory.class)) {
-			final Inventory inventory = context.getAs(Inventory.class);
+			final Inventory inventory = context.to(Inventory.class);
 
 		}
 	}

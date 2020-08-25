@@ -6,14 +6,16 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.github.fablabsmc.fablabs.api.permission.v1.PermissionHandler;
-import io.github.fablabsmc.fablabs.api.permission.v1.TriState;
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.Actor;
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.OfflineActor;
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.PlayerActor;
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.ServerActor;
+import io.github.fablabsmc.fablabs.api.permission.v1.context.UserContext;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+
+import net.fabricmc.fabric.api.util.TriState;
 
 public class PermissionManagerImpl {
 	private static final Set<PermissionHandler> HANDLERS = new HashSet<>();
@@ -27,16 +29,16 @@ public class PermissionManagerImpl {
 		}
 	}
 
-	public static TriState getPermissionValue(Actor actor, String permission) {
+	public static TriState getPermissionValue(Actor actor, UserContext userContext) {
 		Objects.requireNonNull(actor, "Subject cannot be null");
-		Objects.requireNonNull(permission, "Permission cannot be null");
+		Objects.requireNonNull(userContext, "User context cannot be null");
 
 		if (HANDLERS.isEmpty()) {
 			return null;//TriState.DEFAULT;
 		}
 
 		for (PermissionHandler handler : HANDLERS) {
-			TriState triState = handler.getPermissionValue(actor, permission);
+			TriState triState = handler.getPermissionValue(actor, userContext);
 
 			//if (triState.get()) {
 				//return null;//return triState;
@@ -58,7 +60,7 @@ public class PermissionManagerImpl {
 		return new OfflineActorImpl(uuid);
 	}
 
-	static class OfflineActorImpl implements OfflineActor {
+	static final class OfflineActorImpl implements OfflineActor {
 		private final UUID uuid;
 
 		private OfflineActorImpl(UUID uuid) {
@@ -68,11 +70,6 @@ public class PermissionManagerImpl {
 		@Override
 		public UUID getPlayerUuid() {
 			return this.uuid;
-		}
-
-		@Override
-		public TriState getPermissionValue(String permission) {
-			return null;//return PermissionManagerImpl.getPermissionValue(this, permission);
 		}
 
 		@Override
@@ -88,6 +85,11 @@ public class PermissionManagerImpl {
 		@Override
 		public int hashCode() {
 			return this.uuid.hashCode();
+		}
+
+		@Override
+		public TriState getPermissionValue(UserContext userContext) {
+			return PermissionManagerImpl.getPermissionValue(this, userContext);
 		}
 	}
 }

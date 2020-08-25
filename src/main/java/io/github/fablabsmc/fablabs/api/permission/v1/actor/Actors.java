@@ -12,15 +12,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public final class ActorFactory {
-
+public final class Actors {
 	/**
 	 * Gets the actor from a Minecraft server.
 	 *
 	 * @param server the server
 	 * @return a server actor
 	 */
-	public static ServerActor getActor(MinecraftServer server) {
+	public static ServerActor getServerActor(MinecraftServer server) {
 		Objects.requireNonNull(server, "Server cannot be null");
 		return PermissionManagerImpl.getActor(server);
 	}
@@ -31,23 +30,9 @@ public final class ActorFactory {
 	 * @param player the player
 	 * @return a player actor
 	 */
-	public static PlayerActor getActor(ServerPlayerEntity player) {
+	public static PlayerActor getPlayerActor(ServerPlayerEntity player) {
 		Objects.requireNonNull(player, "ServerPlayerEntity cannot be null");
 		return PermissionManagerImpl.getActor(player);
-	}
-
-	/**
-	 * Gets an actor from a player.
-	 *
-	 * @param player the player
-	 * @return a player actor, or empty if the player is an {@link AbstractClientPlayerEntity player on a client}.
-	 */
-	public static Optional<PlayerActor> getActor(PlayerEntity player) {
-		if (player instanceof ServerPlayerEntity) {
-			return Optional.of(getActor((ServerPlayerEntity) player));
-		}
-
-		return Optional.empty();
 	}
 
 	/**
@@ -58,7 +43,7 @@ public final class ActorFactory {
 	 */
 	public static OfflineActor getOfflineActor(GameProfile profile) {
 		Objects.requireNonNull(profile, "Profile cannot be null");
-		return getOfflineActor(profile.getId());
+		return Actors.getOfflineActor(profile.getId());
 	}
 
 	/**
@@ -72,6 +57,6 @@ public final class ActorFactory {
 		return PermissionManagerImpl.getOfflineActor(uuid);
 	}
 
-	private ActorFactory() {
+	private Actors() {
 	}
 }

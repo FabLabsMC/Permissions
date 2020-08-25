@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "io.github.fablabsmc.fablabs.mixin.permission",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "EntityMixin",
+    "MinecraftServerMixin",
+    "ServerPlayerEntityMixin"
+  ],
+  "minVersion": "0.8",
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

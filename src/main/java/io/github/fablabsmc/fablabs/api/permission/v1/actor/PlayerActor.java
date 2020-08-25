@@ -5,7 +5,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 /**
  * Represents an actor that is an online player.
  */
+// TODO: Fake player actor?
 public interface PlayerActor extends EntityActor {
 	@Override
-	ServerPlayerEntity getEntity();
+	ServerPlayerEntity toEntity();
 }
