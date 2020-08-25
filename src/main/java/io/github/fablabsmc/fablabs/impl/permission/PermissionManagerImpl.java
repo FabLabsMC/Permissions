@@ -34,18 +34,18 @@ public class PermissionManagerImpl {
 		Objects.requireNonNull(userContext, "User context cannot be null");
 
 		if (HANDLERS.isEmpty()) {
-			return null;//TriState.DEFAULT;
+			return TriState.DEFAULT;
 		}
 
 		for (PermissionHandler handler : HANDLERS) {
 			TriState triState = handler.getPermissionValue(actor, userContext);
 
-			//if (triState.get()) {
-				//return null;//return triState;
-			//}
+			if (triState.get()) {
+				return triState;
+			}
 		}
 
-		return null;//return TriState.DEFAULT;
+		return TriState.DEFAULT;
 	}
 
 	public static PlayerActor getActor(ServerPlayerEntity player) {
@@ -60,36 +60,4 @@ public class PermissionManagerImpl {
 		return new OfflineActorImpl(uuid);
 	}
 
-	static final class OfflineActorImpl implements OfflineActor {
-		private final UUID uuid;
-
-		private OfflineActorImpl(UUID uuid) {
-			this.uuid = uuid;
-		}
-
-		@Override
-		public UUID getPlayerUuid() {
-			return this.uuid;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (!(o instanceof OfflineActorImpl)) return false;
-
-			OfflineActorImpl that = (OfflineActorImpl) o;
-
-			return this.uuid.equals(that.uuid);
-		}
-
-		@Override
-		public int hashCode() {
-			return this.uuid.hashCode();
-		}
-
-		@Override
-		public TriState getPermissionValue(UserContext userContext) {
-			return PermissionManagerImpl.getPermissionValue(this, userContext);
-		}
-	}
 }
