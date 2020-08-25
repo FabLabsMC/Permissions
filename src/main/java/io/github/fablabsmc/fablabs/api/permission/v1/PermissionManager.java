@@ -34,10 +34,10 @@ public final class PermissionManager {
 	 * @param userContext the permission to check for
 	 * @return whether this player has a permission. False if no providers are registered.
 	 */
-	public static TriState getPermissionValue(Actor actor, UserContext userContext) {
+	public static TriState getPermissionValue(Actor actor, String action, UserContext userContext) {
 		Objects.requireNonNull(actor, "Actor cannot be null");
 		Objects.requireNonNull(userContext, "User context cannot be null");
-		return PermissionManagerImpl.getPermissionValue(actor, userContext);
+		return PermissionManagerImpl.getPermissionValue(actor, action, userContext);
 	}
 
 	private PermissionManager() {

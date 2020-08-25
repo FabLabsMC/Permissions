@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier;
 import net.fabricmc.fabric.api.util.TriState;
 
 public interface PermissionHandler {
-	TriState getPermissionValue(Actor actor, UserContext userContext);
+	TriState getPermissionValue(Actor actor, String action, UserContext userContext);
 
 	Identifier getId();
 }

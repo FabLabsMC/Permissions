@@ -34,6 +34,11 @@ public final class UserContextImpl implements UserContext {
 		return this;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return this.context.isEmpty();
+	}
+
 	static final class DescriptionImpl<V> implements Description<V> {
 		private final V describedObject;
 

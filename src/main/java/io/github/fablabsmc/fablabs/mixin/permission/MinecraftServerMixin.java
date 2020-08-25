@@ -17,7 +17,8 @@ abstract class MinecraftServerMixin implements ServerActor {
 	}
 
 	@Override
-	public TriState getPermissionValue(UserContext userContext) {
-		return PermissionManager.getPermissionValue(this, userContext);
+	public TriState getPermissionValue(String action, UserContext userContext) {
+		// FIXME: How to handle permissions checks for server
+		return PermissionManager.getPermissionValue(this, action, userContext);
 	}
 }

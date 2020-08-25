@@ -29,7 +29,7 @@ public class PermissionManagerImpl {
 		}
 	}
 
-	public static TriState getPermissionValue(Actor actor, UserContext userContext) {
+	public static TriState getPermissionValue(Actor actor, String action, UserContext userContext) {
 		Objects.requireNonNull(actor, "Subject cannot be null");
 		Objects.requireNonNull(userContext, "User context cannot be null");
 
@@ -38,7 +38,7 @@ public class PermissionManagerImpl {
 		}
 
 		for (PermissionHandler handler : HANDLERS) {
-			TriState triState = handler.getPermissionValue(actor, userContext);
+			TriState triState = handler.getPermissionValue(actor, action, userContext);
 
 			if (triState.get()) {
 				return triState;

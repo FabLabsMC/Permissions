@@ -12,6 +12,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+/**
+ * A utility class which provides helper methods to get actors from objects present on a typical Minecraft server.
+ */
 public final class Actors {
 	/**
 	 * Gets the actor from a Minecraft server.

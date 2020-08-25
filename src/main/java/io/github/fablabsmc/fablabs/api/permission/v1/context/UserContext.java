@@ -27,6 +27,8 @@ public interface UserContext {
 
 	<V> UserContext with(ContextKey<V> key, V value);
 
+	boolean isEmpty();
+
 	/**
 	 * Represents a description of an element within a {@link UserContext}.
 	 *

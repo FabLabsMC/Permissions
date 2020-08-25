@@ -35,7 +35,7 @@ final class OfflineActorImpl implements OfflineActor {
 	}
 
 	@Override
-	public TriState getPermissionValue(UserContext userContext) {
-		return PermissionManagerImpl.getPermissionValue(this, userContext);
+	public TriState getPermissionValue(String action, UserContext userContext) {
+		return PermissionManagerImpl.getPermissionValue(this, action, userContext);
 	}
 }

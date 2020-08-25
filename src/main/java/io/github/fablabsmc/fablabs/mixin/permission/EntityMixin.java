@@ -17,7 +17,7 @@ abstract class EntityMixin implements EntityActor {
 	}
 
 	@Override
-	public TriState getPermissionValue(UserContext userContext) {
-		return PermissionManager.getPermissionValue(this, userContext);
+	public TriState getPermissionValue(String action, UserContext userContext) {
+		return PermissionManager.getPermissionValue(this, action, userContext);
 	}
 }
