@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.util.TriState;
 
 public interface Actor {
 	default boolean hasPermission(UserContext userContext) {
-		return false;//return this.getPermissionValue(permission).get();
+		return this.getPermissionValue(userContext).get();
 	}
 
 	TriState getPermissionValue(UserContext userContext);
