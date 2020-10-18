@@ -3,6 +3,7 @@ package io.github.fablabsmc.fablabs.impl.permission;
 import java.util.UUID;
 
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.OfflineActor;
+import io.github.fablabsmc.fablabs.api.permission.v1.ActionType;
 import io.github.fablabsmc.fablabs.api.permission.v1.context.UserContext;
 
 import net.fabricmc.fabric.api.util.TriState;
@@ -35,7 +36,7 @@ final class OfflineActorImpl implements OfflineActor {
 	}
 
 	@Override
-	public TriState getPermissionValue(String action, UserContext userContext) {
-		return PermissionManagerImpl.getPermissionValue(this, action, userContext);
+	public <C> TriState getPermissionValue(ActionType<C> action, C actionContext, UserContext userContext) {
+		return PermissionManagerImpl.getPermissionValue(this, action, actionContext, userContext);
 	}
 }

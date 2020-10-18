@@ -7,8 +7,23 @@ import net.minecraft.util.Identifier;
 
 import net.fabricmc.fabric.api.util.TriState;
 
+/**
+ * Represents a handler which determines whether an actor can perform an action.
+ */
 public interface PermissionHandler {
-	TriState getPermissionValue(Actor actor, String action, UserContext userContext);
+	/**
+	 *
+	 * @param actor
+	 * @param action
+	 * @param userContext
+	 * @return
+	 */
+	<C> TriState getPermissionValue(Actor actor, ActionType<C> action, C actionContext, UserContext userContext);
 
+	/**
+	 * Gets the id of this permission handler.
+	 *
+	 * @return the id of this permission handler.
+	 */
 	Identifier getId();
 }

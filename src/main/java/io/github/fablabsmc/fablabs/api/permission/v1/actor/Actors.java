@@ -1,14 +1,11 @@
 package io.github.fablabsmc.fablabs.api.permission.v1.actor;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 import io.github.fablabsmc.fablabs.impl.permission.PermissionManagerImpl;
 
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 

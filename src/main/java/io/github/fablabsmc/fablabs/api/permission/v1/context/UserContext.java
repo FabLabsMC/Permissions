@@ -4,12 +4,10 @@ import java.util.Optional;
 
 import io.github.fablabsmc.fablabs.impl.permission.UserContextImpl;
 
-import net.minecraft.inventory.Inventory;
-
 /**
  * A context that supplies extra information about the user(s) that may have caused an action to occur.
  *
- * <p>It is highly discouraged to store the user context.
+ * <p>It is highly discouraged to store the user context as the context may change frequently.
  */
 public interface UserContext {
 	/**
@@ -21,12 +19,39 @@ public interface UserContext {
 		return new UserContextImpl();
 	}
 
+	/**
+	 * Gets the description of an entry in the user context, throwing an exception if no value was mapped to the context key.
+	 *
+	 * @param key the key
+	 * @param <V> the type of value
+	 * @return a description of the type mapped to the context
+	 */
 	<V> Description<V> require(ContextKey<V> key);
 
+	/**
+	 * Gets the description of an entry in the user context.
+	 *
+	 * @param key the key
+	 * @param <V> the type of value
+	 * @return a description of the type mapped to the context or {@link Optional#empty()} if the context does not have a value mapped to the specified context key.
+	 */
 	<V> Optional<Description<V>> get(ContextKey<V> key);
 
+	/**
+	 * Adds a new value to the context.
+	 *
+	 * @param key the key of the value
+	 * @param value the value
+	 * @param <V> the type of value
+	 * @return this context
+	 */
 	<V> UserContext with(ContextKey<V> key, V value);
 
+	/**
+	 * Checks if the user context is empty.
+	 *
+	 * @return true if the context is empty
+	 */
 	boolean isEmpty();
 
 	/**
@@ -48,7 +73,14 @@ public interface UserContext {
 		 * Checks if the the described object is applicable to a certain class type.
 		 *
 		 * <p>The wildcards on the {@code type} parameter are intentionally the minimum type constraint allow testing of types that are mixed into an object or do not directly extend the type.
-		 * One example of this is block entities which implement {@link Inventory}.
+		 * One use of this check is checking if a block entity which implements {@code AnInterface}:
+		 * <blockquote><pre>
+		 * UserContext.Description&lt;BlockEntity&gt; contextDescription = [...]
+		 *
+		 * if (contextDescription.isApplicableTo(AnInterface.class)) {
+		 * 	contextDescription.to(AnInterface.class)...
+		 * }
+		 * </pre></blockquote>
 		 *
 		 * <p>If the provided {@code type} is equal to the value of {@link Description#getDescribedType() the described type}, this will return true.
 		 *

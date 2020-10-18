@@ -10,6 +10,7 @@ import io.github.fablabsmc.fablabs.api.permission.v1.actor.Actor;
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.OfflineActor;
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.PlayerActor;
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.ServerActor;
+import io.github.fablabsmc.fablabs.api.permission.v1.ActionType;
 import io.github.fablabsmc.fablabs.api.permission.v1.context.UserContext;
 
 import net.minecraft.server.MinecraftServer;
@@ -17,19 +18,26 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 import net.fabricmc.fabric.api.util.TriState;
 
-public class PermissionManagerImpl {
+public final class PermissionManagerImpl {
 	private static final Set<PermissionHandler> HANDLERS = new HashSet<>();
 
 	private PermissionManagerImpl() {
 	}
 
 	public static void registerHandler(PermissionHandler handler) {
-		if (!HANDLERS.add(handler)) {
-			throw new IllegalArgumentException((String.format("Tried to register a permissions handler of same id %s", handler.getId())));
+		// Verify we are not replacing handlers
+		for (PermissionHandler permissionHandler : HANDLERS) {
+			if (permissionHandler.getId().equals(handler.getId())) {
+				throw new IllegalArgumentException((String.format("Tried to register a permissions handler of same id %s", handler.getId())));
+			}
 		}
+
+		HANDLERS.add(handler);
 	}
 
-	public static TriState getPermissionValue(Actor actor, String action, UserContext userContext) {
+	public static <C> TriState getPermissionValue(Actor actor, ActionType<C> action, C actionContext, UserContext userContext) {
+		// TODO: Should failure take precedence over success?
+		//  i5: Leaning towards yes since you may want to stop a break from blocking regardless of whether a mod wants to move forward.
 		Objects.requireNonNull(actor, "Subject cannot be null");
 		Objects.requireNonNull(userContext, "User context cannot be null");
 
@@ -38,7 +46,7 @@ public class PermissionManagerImpl {
 		}
 
 		for (PermissionHandler handler : HANDLERS) {
-			TriState triState = handler.getPermissionValue(actor, action, userContext);
+			final TriState triState = handler.getPermissionValue(actor, action, actionContext, userContext);
 
 			if (triState.get()) {
 				return triState;
@@ -59,5 +67,4 @@ public class PermissionManagerImpl {
 	public static OfflineActor getOfflineActor(UUID uuid) {
 		return new OfflineActorImpl(uuid);
 	}
-
 }

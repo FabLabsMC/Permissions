@@ -63,7 +63,7 @@ public final class UserContextImpl implements UserContext {
 		}
 
 		@Override
-		public <N> N to(Class<N> type) {
+		public <N> N to(Class<N> type) throws ClassCastException {
 			return type.cast(this.describedObject);
 		}
 	}

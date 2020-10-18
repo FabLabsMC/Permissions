@@ -2,6 +2,7 @@ package io.github.fablabsmc.fablabs.mixin.permission;
 
 import io.github.fablabsmc.fablabs.api.permission.v1.PermissionManager;
 import io.github.fablabsmc.fablabs.api.permission.v1.actor.ServerActor;
+import io.github.fablabsmc.fablabs.api.permission.v1.ActionType;
 import io.github.fablabsmc.fablabs.api.permission.v1.context.UserContext;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -17,8 +18,8 @@ abstract class MinecraftServerMixin implements ServerActor {
 	}
 
 	@Override
-	public TriState getPermissionValue(String action, UserContext userContext) {
+	public <C> TriState getPermissionValue(ActionType<C> action, C actionContext, UserContext userContext) {
 		// FIXME: How to handle permissions checks for server
-		return PermissionManager.getPermissionValue(this, action, userContext);
+		return PermissionManager.getPermissionValue(this, action, actionContext, userContext);
 	}
 }
